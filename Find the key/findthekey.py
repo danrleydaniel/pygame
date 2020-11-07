@@ -1,5 +1,21 @@
 import pygame
 
+'''
+
+		--- CRÉDITOS DOS SPRITES UTILIZADOS NESSE PROJETO: ---
+		Protagonista e inimigo: https://opengameart.org/content/classic-hero-and-baddies-pack
+		Chão e árvores: https://opengameart.org/content/beastlands
+		Tijolos: https://opengameart.org/content/castle-exterior-tiles
+		Disparo: http://freegameassets.blogspot.com/
+		Ovo: https://opengameart.org/content/egg-0 (não implementado no código ainda)
+		Mascote: https://opengameart.org/content/door-key-and-creatures (não implementado no código ainda)
+		Porta: https://opengameart.org/content/dungeon-door
+		Chave: https://opengameart.org/content/key-icons
+
+
+'''
+
+
 WIDTH = 1000
 HEIGHT = 600
 
