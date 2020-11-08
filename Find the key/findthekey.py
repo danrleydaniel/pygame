@@ -2,13 +2,14 @@ import pygame
 
 '''
 
+
 		--- CRÉDITOS DOS SPRITES UTILIZADOS NESSE PROJETO: ---
 		Protagonista e inimigo: https://opengameart.org/content/classic-hero-and-baddies-pack
 		Chão e árvores: https://opengameart.org/content/beastlands
 		Tijolos: https://opengameart.org/content/castle-exterior-tiles
 		Disparo: http://freegameassets.blogspot.com/
-		Ovo: https://opengameart.org/content/egg-0 (não implementado no código ainda)
-		Mascote: https://opengameart.org/content/door-key-and-creatures (não implementado no código ainda)
+		Ovo: https://opengameart.org/content/egg-0
+		Mascote: https://opengameart.org/content/door-key-and-creatures
 		Porta: https://opengameart.org/content/dungeon-door
 		Chave: https://opengameart.org/content/key-icons
 
@@ -32,7 +33,7 @@ matriz = [
 "..........TTTT...................................................................",
 "...TTTT..........................................................................",
 ".................................................................................",
-"...........M..........A..........M.........A......M...........................D..",
+"...........M..........A..........M.....O...A......M...........................D..",
 "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 ]
 
@@ -97,13 +98,23 @@ class Porta(pygame.sprite.Sprite):
 		y = linha * BLOCK_H
 		self.rect = pygame.Rect((x,y),(BLOCK_W, BLOCK_H))
 
+class Ovo(pygame.sprite.Sprite):
+	def __init__(self, linha, coluna):
+		pygame.sprite.Sprite.__init__(self)
+		img_orig = ovo
+		self.image = pygame.transform.scale(img_orig, (BLOCK_W, BLOCK_H))
+		x = coluna * BLOCK_W
+		y = linha * BLOCK_H
+		self.rect = pygame.Rect((x,y),(BLOCK_W, BLOCK_H))
+
+
 class Monster(pygame.sprite.Sprite):
 	def __init__(self, linha, coluna):
 		pygame.sprite.Sprite.__init__(self)
 		img_orig = inimigo
 		self.image = pygame.transform.scale(img_orig, (BLOCK_W, BLOCK_H))
 		self.rect = pygame.Rect((coluna * BLOCK_W, linha * BLOCK_H), (BLOCK_W, BLOCK_H))
-		self.vel_x = -3
+		self.vel_x = -0.009
 		self.vel_y = 0
 
 	def update(self, *args):
@@ -117,7 +128,6 @@ class Disparo(pygame.sprite.Sprite):
 		self.rect = pygame.Rect(personagem.rect.center, (BLOCK_W // 2, BLOCK_H // 2))
 		self.vel_x = 6
 		self.vel_y = 0
-		self.withthekey = False
 
 	def update(self, *args):
 		self.rect.centerx += self.vel_x
@@ -133,6 +143,7 @@ class Protagonista(pygame.sprite.Sprite):
 		self.gravity = 0.009
 		self.intencao_pos = list(self.rect.center)
 		self.withthekey = False
+		self.withamascot = False
 
 	def mover_esquerda(self):
 		self.vel_x = -2
@@ -169,6 +180,21 @@ class Protagonista(pygame.sprite.Sprite):
 
 	def pegar_chave(self):
 		self.withthekey = True
+
+	def pegar_mascote(self):
+		self.withamascot = True
+
+class Mascote(pygame.sprite.Sprite):
+	def __init__(self, personagem):
+		pygame.sprite.Sprite.__init__(self)
+		img_orig = mascote
+		self.image = pygame.transform.scale(img_orig, (BLOCK_W // 2, BLOCK_H // 2))
+		self.rect = pygame.Rect(personagem.rect.center, (BLOCK_W // 2, BLOCK_H // 2))
+		self.vel_x = 0
+		self.vel_y = 0
+
+	def update(self, personagem):
+		self.rect.centerx = personagem.rect.centerx - 35
 
 class Camera:
 	def __init__(self, position, tamanho):
@@ -211,6 +237,8 @@ shoots = pygame.sprite.Group()
 keys = pygame.sprite.Group()
 doors = pygame.sprite.Group()
 trees = pygame.sprite.Group()
+mascots = pygame.sprite.Group()
+eggs = pygame.sprite.Group()
 
 for linha, lin in enumerate(matriz):
 	for coluna in range(0, 80):
@@ -233,6 +261,10 @@ for linha, lin in enumerate(matriz):
 		elif elemento == "M":
 			enemy = Monster(linha, coluna)
 			enemies.add(enemy)
+		elif elemento == "O":
+			egg = Ovo(linha, coluna)
+			eggs.add(egg)
+
 
 cam = Camera((0,0),(WIDTH,HEIGHT))
 
@@ -253,13 +285,20 @@ while True:
 
 	cam.draw_group(doors)
 
+	cam.draw_group(mascots)
 
+	cam.draw_group(eggs)
 
 	cam.paint(screen)
 	pygame.display.update()
 
 	heroes.update()
 	shoots.update()
+	enemies.update()
+
+	if main.withamascot:
+		mascots.update(main)
+
 	main.teste_colisao(blocks)
 
 	pygame.sprite.groupcollide(enemies, shoots, True, True)
@@ -268,6 +307,10 @@ while True:
 		doors.image = pygame.transform.scale(porta, (BLOCK_W, BLOCK_H))
 		main.pegar_chave()
 
+	if pygame.sprite.groupcollide(heroes, enemies, True, False):
+		print("Você perdeu :(")
+		exit()
+
 	if pygame.sprite.groupcollide(heroes, doors, False, False):
 		if main.withthekey:
 			print("Fim do jogo!")
@@ -275,6 +318,11 @@ while True:
 
 		else:
 			print("Você precisa da chave para abrir essa porta")
+
+	if pygame.sprite.groupcollide(heroes, eggs, False, True):
+		mascot = Mascote(main)
+		mascots.add(mascot)
+		main.pegar_mascote()
 
 	for tiro in shoots:
 		if tiro.rect.centerx > (main.rect.centerx + 500):
