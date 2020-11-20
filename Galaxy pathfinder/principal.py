@@ -8,7 +8,7 @@ from pygame.locals import *
 	Créditos dos sprites utilizados:
 	Astronauta e plataforma: https://opengameart.org/content/astronaut-0
 	Background: https://opengameart.org/content/parallax-space-scene-seamlessly-scrolls-too
-	Alien inimigo: https://opengameart.org/content/alien-2d-sprites (ainda não implementado)
+	Alien inimigo: https://opengameart.org/content/alien-2d-sprites
 	Nave espacial: https://opengameart.org/content/simple-spaceship (ainda não implementado)
 	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities (ainda não implementado)
 	Disparo e boss: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (ainda não implementado)
@@ -24,13 +24,19 @@ win = pygame.display.set_mode((w, h))
 game = True
 dire = 0
 mov = 0
+relo = pygame.time.Clock()
 
 '''   direita	  esquerda    parado   '''
 pos = [[87, 116], [29, 58], [0, 145]]
 
+'''          pos1      pos2    pos3    '''
+pos_alien = [1    ,    93,     141]
+
 itens = pygame.image.load("images/astronauta.png")
 fundo = pygame.image.load("images/background.jpg")
+alien = pygame.image.load("images/alien.png")
 astro = personagem.Personagem(0, 0, 200, 200, 29, 37)
+enemy = personagem.Alien(0, 0, 100, 200, 30, 37)
 
 def masked_blit(win, img, wx, wy, x, y, w, h):
 	'''
@@ -70,9 +76,13 @@ while game:
 
 	control(astro)
 	masked_blit(win, itens, pos[dire][int(mov / 10)], astro.wy, astro.x, astro.y, astro.w, astro.h)
+	masked_blit(win, alien, pos_alien[enemy.direc], enemy.wy, enemy.x, enemy.y, enemy.w, enemy.h)
 	pygame.display.flip()
 
 	win.fill((255, 255, 255))
+
+	enemy.update(w)
+	relo.tick(700)
 
 	for e in pygame.event.get():
 		if e.type == pygame.QUIT:
@@ -81,8 +91,8 @@ while game:
 '''
 Desafios para as próximas atualizações:
 
-	- Colocar aliens inimigos ()
-	- Adicionar colisão com inimigos ()
+	- Colocar alien inimigo (✓)
+	- Adicionar colisão com inimigo ()
 	- Adicionar disparos do astronauta()
 	- Adicionar sistema de gasolina e foguete ()
 	- Adicionar múltiplas fases ()
