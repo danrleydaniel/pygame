@@ -12,31 +12,36 @@ from pygame.locals import *
 	Nave espacial: https://opengameart.org/content/simple-spaceship (ainda não implementado)
 	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities (ainda não implementado)
 	Disparo e boss: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (ainda não implementado)
-	Música de fundo: https://opengameart.org/content/through-space (ainda não implementado)
+	Música de fundo: https://opengameart.org/content/through-space
 '''
 
 
 pygame.init()
 
-w = 870
-h = 370
-win = pygame.display.set_mode((w, h))
-game = True
-dire = 0
-mov = 0
-relo = pygame.time.Clock()
+#Variáveis globais:
+w = 870 #Largura da tela
+h = 370 #Altura da tela
+win = pygame.display.set_mode((w, h)) #Criação da janela
+game = True #Variável que diz se o game está rolando ou não
+dire = 0 #Usado na movimentação do astronauta
+mov = 0 #Usado na movimentação do astronauta
+relo = pygame.time.Clock() #Relógio para diminuir um pouco a velocidade do jogo
 
 '''   direita	  esquerda    parado   '''
-pos = [[87, 116], [29, 58], [0, 145]]
+pos = [[87, 116], [29, 58], [0, 145]] #Define a movimentação do astronauta
 
 '''          pos1      pos2    pos3    '''
-pos_alien = [1    ,    93,     141]
+pos_alien = [1    ,    93,     141] #Define a movimentação do alien
 
-itens = pygame.image.load("images/astronauta.png")
-fundo = pygame.image.load("images/background.jpg")
-alien = pygame.image.load("images/alien.png")
-astro = personagem.Personagem(0, 0, 200, 200, 29, 37)
-enemy = personagem.Alien(0, 0, 100, 200, 30, 37)
+itens = pygame.image.load("images/astronauta.png") #Carrega os sprites do astronauta
+fundo = pygame.image.load("images/background.jpg") #Carrega a imagem de fundo
+alien = pygame.image.load("images/alien.png") #Carrega os sprites do alien
+astro = personagem.Personagem(0, 0, 200, 200, 29, 37) #Cria o astronauta
+enemy = personagem.Alien(0, 0, 100, 200, 30, 37) #Cria o alien
+
+#Para tocar a música:
+pygame.mixer.music.load("music/through space.ogg")
+pygame.mixer.music.play()
 
 def masked_blit(win, img, wx, wy, x, y, w, h):
 	'''
@@ -70,6 +75,10 @@ def control(obj):
 	if mov < 0:
 		mov = 19
 
+def is_colliding(obj1, obj2, dist): #Recebe os dois objetos que eu quero testar a colisão, e a distância de colisão desejada
+	if obj1.x >= obj2.x - dist and obj1.x <= obj2.x + dist:
+		return True
+
 while game:
 
 	win.blit(fundo, (0,0))
@@ -80,6 +89,9 @@ while game:
 	pygame.display.flip()
 
 	win.fill((255, 255, 255))
+
+	if is_colliding(astro, enemy, 25):
+		print("Está colidindo")
 
 	enemy.update(w)
 	relo.tick(700)
@@ -92,7 +104,7 @@ while game:
 Desafios para as próximas atualizações:
 
 	- Colocar alien inimigo (✓)
-	- Adicionar colisão com inimigo ()
+	- Adicionar colisão com inimigo (✓)
 	- Adicionar disparos do astronauta()
 	- Adicionar sistema de gasolina e foguete ()
 	- Adicionar múltiplas fases ()
