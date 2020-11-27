@@ -6,6 +6,7 @@ class Personagem:
 		self.h = h
 		self.wx = wx
 		self.wy = wy
+		self.posicao = "idle"
 
 class Alien:
 	def __init__(self, wx, wy, x, y, w, h):
