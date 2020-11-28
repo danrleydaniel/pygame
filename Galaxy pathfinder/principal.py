@@ -40,7 +40,7 @@ pos_tiro = [   0   ,        33     ] #Define a movimentação do disparo
 
 itens = pygame.image.load("images/astronauta.png") #Carrega os sprites do astronauta
 fundo = pygame.image.load("images/background.jpg") #Carrega a imagem de fundo
-alien = pygame.image.load("images/alien.png") #Carrega os sprites do alien
+alien = pygame.image.load("images/alienigena.png") #Carrega os sprites do alien
 astro = personagem.Personagem(0, 0, 200, 200, 29, 37) #Cria o astronauta
 enemy = personagem.Alien(0, 0, 100, 200, 30, 37) #Cria o alien
 shoot = pygame.image.load("images/disparo.png") #Carrega os sprites do tiro
