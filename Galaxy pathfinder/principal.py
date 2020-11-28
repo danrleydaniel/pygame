@@ -28,12 +28,13 @@ dire = 0 #Usado na movimentação do astronauta
 mov = 0 #Usado na movimentação do astronauta
 relo = pygame.time.Clock() #Relógio para diminuir um pouco a velocidade do jogo
 window = pygame.Rect((0 , 0),(w , h))
+cont = 0
 
 '''   direita	  esquerda    parado   '''
 pos = [[87, 116], [29, 58], [0, 145]] #Define a movimentação do astronauta
 
-'''          pos1      pos2    pos3    '''
-pos_alien = [1    ,    93,     141] #Define a movimentação do alien
+'''          pos1      pos2    pos3    dead      '''
+pos_alien = [1    ,    93,     141,    45] #Define a movimentação do alien
 '''         direita       esquerda      '''
 pos_tiro = [   0   ,        33     ] #Define a movimentação do disparo
 
@@ -111,17 +112,18 @@ while game:
 	win.fill((255, 255, 255))
 
 	if is_colliding(astro, enemy, 25): #Se o astronauta colidir com o inimigo...
-		print("O alienígena te atacou") #O jogo diz que o astronauta foi atacado
+		if enemy.vivo: #...se o alienígena estiver vivo...
+			print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou.
 
 	for t in shoots:
-		if t.rect.centerx > (astro.x + 500):
+		if t.rect.centerx > (astro.x + 1000):
 			t.kill() #Se o tiro se afastar muito do personagem, ele é deletado
-		if t.rect.centerx < (astro.x - 500):
+		if t.rect.centerx < (astro.x - 1000):
 			t.kill() #Se o tiro se afastar muito do personagem, ele é deletado
 
 		if hit(enemy, t, 20): #Quando o tiro atinge o inimigo...
 			t.kill() #... o tiro é deletado...
-			print("O alienígena foi atingido!") #... e o jogo diz que o alienígena foi atingido pelo tiro
+			enemy.matar() #... e o alienígena morre.
 
 	enemy.update(w) #Atualiza as animações do alien
 	shoots.update() #Atualiza os tiros
