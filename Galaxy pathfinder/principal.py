@@ -1,6 +1,7 @@
 import pygame
 import personagem
 import objetos
+from random import randint
 from pygame.locals import *
 '''
 	Este projeto foi feito baseando-se na aula:
@@ -11,7 +12,7 @@ from pygame.locals import *
 	Background: https://opengameart.org/content/parallax-space-scene-seamlessly-scrolls-too
 	Alien inimigo: https://opengameart.org/content/alien-2d-sprites
 	Nave espacial: https://opengameart.org/content/simple-spaceship (ainda não implementado)
-	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities (ainda não implementado)
+	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities
 	Disparo e boss: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (ainda não implementado)
 	Música de fundo: https://opengameart.org/content/through-space
 '''
@@ -28,7 +29,8 @@ dire = 0 #Usado na movimentação do astronauta
 mov = 0 #Usado na movimentação do astronauta
 relo = pygame.time.Clock() #Relógio para diminuir um pouco a velocidade do jogo
 window = pygame.Rect((0 , 0),(w , h))
-cont = 0
+aleatoria = randint(50, 300) #Posição aleatória para a gasolina
+
 
 '''   direita	  esquerda    parado   '''
 pos = [[87, 116], [29, 58], [0, 145]] #Define a movimentação do astronauta
@@ -38,14 +40,28 @@ pos_alien = [1    ,    93,     141,    45] #Define a movimentação do alien
 '''         direita       esquerda      '''
 pos_tiro = [   0   ,        33     ] #Define a movimentação do disparo
 
+''' ÁREAS: '''
+shoot_rect = pygame.Rect(13, 13, 13, 13) #Cria a área do disparo
+gas_rect = pygame.Rect(0, 0, 19, 29) #Cria a área da gasolina
+
+''' SPRITES: '''
 itens = pygame.image.load("images/astronauta.png") #Carrega os sprites do astronauta
 fundo = pygame.image.load("images/background.jpg") #Carrega a imagem de fundo
 alien = pygame.image.load("images/alienigena.png") #Carrega os sprites do alien
-astro = personagem.Personagem(0, 0, 200, 200, 29, 37) #Cria o astronauta
-enemy = personagem.Alien(0, 0, 100, 200, 30, 37) #Cria o alien
+gas = pygame.image.load("images/gasolina.png") #Carrega o sprite da gasolina
 shoot = pygame.image.load("images/disparo.png") #Carrega os sprites do tiro
-shoot_rect = pygame.Rect(13, 13, 13, 13) #Cria a área do disparo
+
+
+''' PERSONAGENS CRIADOS: '''
+astro = personagem.Personagem(0, 0, 200, 200, 29, 37) #Cria o astronauta
+enemy = personagem.Alien(0, 0, 50, 200, 30, 37) #Cria o alien
+
+''' OBJETOS CRIADOS: '''
+gasosa = objetos.Gasolina(gas, aleatoria, 200, gas_rect) #Cria a gasolina
+
+''' GRUPOS: '''
 shoots = pygame.sprite.Group() #Cria o grupo de disparos
+grupo_gas = pygame.sprite.Group() #Cria o grupo de gasolina
 
 #Para tocar a música:
 pygame.mixer.music.load("music/through space.ogg")
@@ -103,10 +119,11 @@ while game:
 
 	win.blit(fundo, (0,0)) #Coloca o background na tela
 
-	control(astro) #Permite controlar o personagme
+	control(astro) #Permite controlar o personagem
 	masked_blit(win, itens, pos[dire][int(mov / 10)], astro.wy, astro.x, astro.y, astro.w, astro.h) #Exibe na tela a animação do personagem
 	masked_blit(win, alien, pos_alien[enemy.direc], enemy.wy, enemy.x, enemy.y, enemy.w, enemy.h) #Exibe na tela a animação do alien
 	draw_group(shoots) #Desenha o grupo de disparos
+	draw_group(grupo_gas) #Desenha o grupo de gasolinas
 	pygame.display.flip() #Atualiza a tela
 
 	win.fill((255, 255, 255))
@@ -115,6 +132,12 @@ while game:
 		if enemy.vivo: #...se o alienígena estiver vivo...
 			print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou.
 
+	if gasosa.gerado: #Se a gasolina estiver gerada...
+		if is_colliding(astro, gasosa, 25): #... e os astronauta estiver colidindo com ela...
+			print("Você pegou a gasolina!") #... o jogo diz que o astronauta pegou a gasolina...
+			gasosa.kill() #... destrói o sprite...
+			gasosa.destruir() #... e destrói a gasolina gerada.
+
 	for t in shoots:
 		if t.rect.centerx > (astro.x + 1000):
 			t.kill() #Se o tiro se afastar muito do personagem, ele é deletado
@@ -122,8 +145,11 @@ while game:
 			t.kill() #Se o tiro se afastar muito do personagem, ele é deletado
 
 		if hit(enemy, t, 20): #Quando o tiro atinge o inimigo...
-			t.kill() #... o tiro é deletado...
-			enemy.matar() #... e o alienígena morre.
+			if enemy.vivo: #... se o alienígena estiver vivo...
+				t.kill() #... o tiro é deletado...
+				enemy.matar() #... o alienígena morre...
+				gasosa.gerar() #... o tanque de gasolina é gerado...
+				grupo_gas.add(gasosa) #... e é adicionado ao grupo.
 
 	enemy.update(w) #Atualiza as animações do alien
 	shoots.update() #Atualiza os tiros
