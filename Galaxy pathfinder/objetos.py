@@ -30,3 +30,19 @@ class Gasolina(pygame.sprite.Sprite):
 
 	def destruir(self):
 		self.gerado = False
+
+class Foguete(pygame.sprite.Sprite):
+	def __init__(self, img, fog_x, fog_y, sr):
+		pygame.sprite.Sprite.__init__(self)
+		self.rect = sr
+		self.image = img
+		self.x = fog_x
+		self.y = fog_y
+		self.ligado = False
+
+	def ligar(self):
+		self.ligado = True
+
+	def update(self):
+		if self.ligado:
+			self.y -= 2
