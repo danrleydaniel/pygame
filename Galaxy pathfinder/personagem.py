@@ -7,6 +7,14 @@ class Personagem:
 		self.wx = wx
 		self.wy = wy
 		self.posicao = "idle"
+		self.com_a_gasolina = False
+		self.dentro_do_foguete = False
+
+	def pegar_gasolina(self):
+		self.com_a_gasolina = True
+
+	def entrar_no_foguete(self):
+		self.dentro_do_foguete = True
 
 class Alien:
 	def __init__(self, wx, wy, x, y, w, h):
