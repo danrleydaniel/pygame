@@ -28,7 +28,6 @@ game = True #Variável que diz se o game está rolando ou não
 dire = 0 #Usado na movimentação do astronauta
 mov = 0 #Usado na movimentação do astronauta
 relo = pygame.time.Clock() #Relógio para diminuir um pouco a velocidade do jogo
-window = pygame.Rect((0 , 0),(w , h))
 aleatoria = randint(50, 300) #Posição aleatória para a gasolina
 
 
@@ -43,6 +42,7 @@ pos_tiro = [   0   ,        33     ] #Define a movimentação do disparo
 ''' ÁREAS: '''
 shoot_rect = pygame.Rect(13, 13, 13, 13) #Cria a área do disparo
 gas_rect = pygame.Rect(0, 0, 19, 29) #Cria a área da gasolina
+rocket_rect = pygame.Rect(52, 52, 52, 52) #Cria a área do foguete
 
 ''' SPRITES: '''
 itens = pygame.image.load("images/astronauta.png") #Carrega os sprites do astronauta
@@ -50,6 +50,7 @@ fundo = pygame.image.load("images/background.jpg") #Carrega a imagem de fundo
 alien = pygame.image.load("images/alienigena.png") #Carrega os sprites do alien
 gas = pygame.image.load("images/gasolina.png") #Carrega o sprite da gasolina
 shoot = pygame.image.load("images/disparo.png") #Carrega os sprites do tiro
+rocket = pygame.image.load("images/foguete.png") #Carrega o sprite do foguete
 
 
 ''' PERSONAGENS CRIADOS: '''
@@ -58,14 +59,24 @@ enemy = personagem.Alien(0, 0, 50, 200, 30, 37) #Cria o alien
 
 ''' OBJETOS CRIADOS: '''
 gasosa = objetos.Gasolina(gas, aleatoria, 200, gas_rect) #Cria a gasolina
+foguete = objetos.Foguete(rocket, 800, 190, rocket_rect) #Cria o foguete
+
 
 ''' GRUPOS: '''
 shoots = pygame.sprite.Group() #Cria o grupo de disparos
 grupo_gas = pygame.sprite.Group() #Cria o grupo de gasolina
+rockets = pygame.sprite.Group() #Cria o grupo de foguetes
 
 #Para tocar a música:
 pygame.mixer.music.load("music/through space.ogg")
 pygame.mixer.music.play()
+
+def nothing_pressed():
+	for i in pygame.key.get_pressed():
+		if i == 1:
+			return False
+
+	return True
 
 def masked_blit(win, img, wx, wy, x, y, w, h):
 	'''
@@ -100,6 +111,14 @@ def control(obj): #Controla o personagem
 		mov += 1
 		obj.posicao = "right"
 
+	if nothing_pressed():
+		if obj.posicao == "right":
+			dire = 2
+			mov = 0
+		if obj.posicao == "left":
+			dire = 2
+			mov = 19
+
 	if mov > 19:
 		mov = 0
 	if mov < 0:
@@ -115,15 +134,19 @@ def hit(inimigo, disparo, dist): #Recebe como parâmetro o alien e o disparo, pa
 	if inimigo.x >= disparo.x and inimigo.x <= disparo.x + dist:
 		return True
 
+rockets.add(foguete)
+
 while game:
 
 	win.blit(fundo, (0,0)) #Coloca o background na tela
 
 	control(astro) #Permite controlar o personagem
-	masked_blit(win, itens, pos[dire][int(mov / 10)], astro.wy, astro.x, astro.y, astro.w, astro.h) #Exibe na tela a animação do personagem
+	if not astro.dentro_do_foguete: #Se o personagem não estiver dentro do foguete...
+		masked_blit(win, itens, pos[dire][int(mov / 10)], astro.wy, astro.x, astro.y, astro.w, astro.h) #o jogo exibe na tela a animação do personagem
 	masked_blit(win, alien, pos_alien[enemy.direc], enemy.wy, enemy.x, enemy.y, enemy.w, enemy.h) #Exibe na tela a animação do alien
 	draw_group(shoots) #Desenha o grupo de disparos
 	draw_group(grupo_gas) #Desenha o grupo de gasolinas
+	draw_group(rockets) #Desenha o grupo de foguetes
 	pygame.display.flip() #Atualiza a tela
 
 	win.fill((255, 255, 255))
@@ -132,9 +155,17 @@ while game:
 		if enemy.vivo: #...se o alienígena estiver vivo...
 			print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou.
 
+	if is_colliding(astro, foguete, 15): #Se o astronauta colidir com o foguete...
+		if not astro.com_a_gasolina: #... e não estiver com a gasolina...
+			print("Você precisa da gasolina para ligar o foguete") #... o jogo diz que ele precisa da gasolina para ligar o foguete...
+		else: #... mas se estiver...
+			astro.entrar_no_foguete() #... o astronauta entra no foguete.
+			foguete.ligar()
+
 	if gasosa.gerado: #Se a gasolina estiver gerada...
 		if is_colliding(astro, gasosa, 25): #... e os astronauta estiver colidindo com ela...
 			print("Você pegou a gasolina!") #... o jogo diz que o astronauta pegou a gasolina...
+			astro.pegar_gasolina()
 			gasosa.kill() #... destrói o sprite...
 			gasosa.destruir() #... e destrói a gasolina gerada.
 
@@ -153,6 +184,7 @@ while game:
 
 	enemy.update(w) #Atualiza as animações do alien
 	shoots.update() #Atualiza os tiros
+	rockets.update() #Atualiza os foguetes
 	relo.tick(700) #Dá uma pausa de 700 milissegundos no jogo para as animações não ficarem muito frenéticas
 
 	for e in pygame.event.get():
@@ -171,7 +203,7 @@ Desafios para as próximas atualizações:
 	- Colocar alien inimigo (✓)
 	- Adicionar colisão com inimigo (✓)
 	- Adicionar disparos do astronauta(✓)
-	- Adicionar sistema de gasolina e foguete ()
+	- Adicionar sistema de gasolina e foguete (✓)
 	- Adicionar múltiplas fases ()
 	- Adicionar boss na fase 3 ()
 	- Adicionar menu ()
