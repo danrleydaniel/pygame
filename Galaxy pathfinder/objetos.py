@@ -24,9 +24,11 @@ class Gasolina(pygame.sprite.Sprite):
 		self.x = gas_x
 		self.y = gas_y
 		self.gerado = False
+		self.qtd_gerada = 0
 
 	def gerar(self):
 		self.gerado = True
+		self.qtd_gerada += 1
 
 	def destruir(self):
 		self.gerado = False
