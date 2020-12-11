@@ -16,7 +16,8 @@ from pygame.locals import *
 	Nave espacial: https://opengameart.org/content/simple-spaceship (criado por Xevin)
 	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities (criado por ChaosShark)
 	Disparo e boss: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (criado por mieki256) (ainda não implementado)
-	Health-bar do boss: https://opengameart.org/content/enemy-health-bar (criado por www.PhysHexGames.com)
+	Health-bar do boss: https://opengameart.org/content/enemy-health-bar (criado por www.PhysHexGames.com) (ainda não implementado)
+	Robô: https://opengameart.org/content/little-angry-robot-drone (criado por qubodup, baseado na arte de jastew) (ainda não implementado)
 	Música de fundo: https://opengameart.org/content/through-space (criado por maxstack)
 '''
 
