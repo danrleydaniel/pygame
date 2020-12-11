@@ -9,13 +9,15 @@ from pygame.locals import *
 	https://www.youtube.com/watch?v=dFYjGvo9VKw
 
 	Créditos dos sprites utilizados:
-	Astronauta e plataforma: https://opengameart.org/content/astronaut-0
-	Background: https://opengameart.org/content/parallax-space-scene-seamlessly-scrolls-too
-	Alien inimigo: https://opengameart.org/content/alien-2d-sprites
-	Nave espacial: https://opengameart.org/content/simple-spaceship (ainda não implementado)
-	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities
-	Disparo e boss: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (ainda não implementado)
-	Música de fundo: https://opengameart.org/content/through-space
+	Astronauta e plataforma: https://opengameart.org/content/astronaut-0 (criado por MrGecko)
+	Background: https://opengameart.org/content/parallax-space-scene-seamlessly-scrolls-too (criado por LuminousDragonGames)
+	Background da fase 3: https://opengameart.org/content/2d-space-background (criado por Scribe)
+	Alien inimigo: https://opengameart.org/content/alien-2d-sprites (criado por Korba™)
+	Nave espacial: https://opengameart.org/content/simple-spaceship (criado por Xevin)
+	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities (criado por ChaosShark)
+	Disparo e boss: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (criado por mieki256) (ainda não implementado)
+	Health-bar do boss: https://opengameart.org/content/enemy-health-bar (criado por www.PhysHexGames.com)
+	Música de fundo: https://opengameart.org/content/through-space (criado por maxstack)
 '''
 
 
