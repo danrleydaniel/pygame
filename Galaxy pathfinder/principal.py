@@ -15,9 +15,9 @@ from pygame.locals import *
 	Alien inimigo: https://opengameart.org/content/alien-2d-sprites (criado por Korba™)
 	Nave espacial: https://opengameart.org/content/simple-spaceship (criado por Xevin)
 	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities (criado por ChaosShark)
-	Disparo e boss: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (criado por mieki256) (ainda não implementado)
-	Health-bar do boss: https://opengameart.org/content/enemy-health-bar (criado por www.PhysHexGames.com) (ainda não implementado)
-	Robô: https://opengameart.org/content/little-angry-robot-drone (criado por qubodup, baseado na arte de jastew) (ainda não implementado)
+	Disparo, boss e canhão: https://opengameart.org/content/sci-fi-shoot-em-up-object-images (criado por mieki256) 
+	Health-bar do boss: https://opengameart.org/content/enemy-health-bar (criado por www.PhysHexGames.com) 
+	Robô: https://opengameart.org/content/little-angry-robot-drone (criado por qubodup, baseado na arte de jastew)
 	Música de fundo: https://opengameart.org/content/through-space (criado por maxstack)
 '''
 
@@ -49,33 +49,60 @@ pos_tiro = [   0   ,        33     ] #Define a movimentação do disparo
 shoot_rect = pygame.Rect(13, 13, 13, 13) #Cria a área do disparo
 gas_rect = pygame.Rect(0, 0, 19, 29) #Cria a área da gasolina
 rocket_rect = pygame.Rect(52, 52, 52, 52) #Cria a área do foguete
+robot_rect = pygame.Rect(0, 0, 44, 42) #Cria a área do robô
+cannon_rect = pygame.Rect(42, 63, 42, 63) #Cria a área do canhão
 
 ''' SPRITES: '''
 itens = pygame.image.load("images/astronauta.png") #Carrega os sprites do astronauta
 fundo = pygame.image.load("images/background.jpg") #Carrega a imagem de fundo
 fundo2 = pygame.image.load("images/background2.png") #Carrega a imagem de fundo da fase 2
+fundo3 = pygame.image.load("images/background3.png") #Carrega a imagem de fundo da fase 3
 alien = pygame.image.load("images/alienigena.png") #Carrega os sprites do alien
 gas = pygame.image.load("images/gasolina.png") #Carrega o sprite da gasolina
 shoot = pygame.image.load("images/disparo.png") #Carrega os sprites do tiro
+cannon_shoot = pygame.image.load("images/canhao_tiro.png") #Carrega o sprite do tiro do canhão
 rocket = pygame.image.load("images/foguete.png") #Carrega o sprite do foguete
+boss = pygame.image.load("images/boss.png") #Carrega o sprite do boss (fase 3)
+robo = pygame.image.load("images/robo.png") #Carrega o sprite do robô (fase 3)
+canhao = pygame.image.load("images/canhao.png") #Carrega o sprite do canhão (fase 3)
+
+''' CARREGA A BARRA DE VIDA DO BOSS: '''
+boss_health_bar = []
+boss_health_bar_sprite = pygame.image.load("images/boss_health_0.png")
+boss_health_bar.append(boss_health_bar_sprite)
+boss_health_bar_sprite = pygame.image.load("images/boss_health_1.png")
+boss_health_bar.append(boss_health_bar_sprite)
+boss_health_bar_sprite = pygame.image.load("images/boss_health_2.png")
+boss_health_bar.append(boss_health_bar_sprite)
+boss_health_bar_sprite = pygame.image.load("images/boss_health_3.png")
+boss_health_bar.append(boss_health_bar_sprite)
+boss_health_bar_sprite = pygame.image.load("images/boss_health_4.png")
+boss_health_bar.append(boss_health_bar_sprite)
 
 ''' PERSONAGENS CRIADOS: '''
 astro = personagem.Personagem(0, 0, 200, 200, 29, 37) #Cria o astronauta
 enemy = personagem.Alien(0, 0, 50, 200, 30, 37) #Cria o alien
 enemy2 = personagem.Alien(0, 0, 50, 200, 30, 37) #Cria o alien
 enemy3 = personagem.Alien(0, 0, 250, 200, 30, 37) #Cria o alien
+chefao = personagem.Boss(0, 0, 300, 5, 287, 287) #Cria o boss
 
 ''' OBJETOS CRIADOS: '''
 gasosa = objetos.Gasolina(gas, randint(50, 300), 200, gas_rect) #Cria a gasolina da fase 1
 gasosa2 = objetos.Gasolina(gas, randint(50, 300), 200, gas_rect) #Cria a gasolina da fase 2
+gasosa3 = objetos.Gasolina(gas, randint(50, 300), 200, gas_rect) #Cria a gasolina da fase 3
 foguete = objetos.Foguete(rocket, 800, 190, rocket_rect) #Cria o foguete
+cannon = objetos.Canhao(canhao, 400, 200, cannon_rect) #Cria o canhão
 
 ''' GRUPOS: '''
 shoots = pygame.sprite.Group() #Cria o grupo de disparos
 grupo_gas = pygame.sprite.Group() #Cria o grupo de gasolina
 rockets = pygame.sprite.Group() #Cria o grupo de foguetes
+robots = pygame.sprite.Group() #Cria o grupo de robôs
+cannons = pygame.sprite.Group() #Cria o grupo de canhões
+cannon_shoots = pygame.sprite.Group() #Cria o grupo de disparos do canhão
 
 rockets.add(foguete)
+cannons.add(cannon)
 
 #Para tocar a música:
 pygame.mixer.music.load("music/through space.ogg")
@@ -158,7 +185,8 @@ class Game():
 
 			if is_colliding(astro, enemy, 25): #Se o astronauta colidir com o inimigo...
 				if enemy.vivo: #...se o alienígena estiver vivo...
-					print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou.
+					print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou...
+					exit() #... e fecha.
 
 			if is_colliding(astro, foguete, 15): #Se o astronauta colidir com o foguete...
 				if not astro.com_a_gasolina: #... e não estiver com a gasolina...
@@ -216,18 +244,22 @@ class Game():
 
 			if is_colliding(astro, enemy2, 25): #Se o astronauta colidir com o inimigo...
 				if enemy2.vivo: #...se o alienígena estiver vivo...
-					print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou.
+					print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou...
+					exit() #... e fecha.
 
 			if is_colliding(astro, enemy3, 25): #Se o astronauta colidir com o inimigo...
 				if enemy3.vivo: #...se o alienígena estiver vivo...
-					print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou.
+					print("O alienígena te atacou!") #...o jogo diz que o alienígena atacou...
+					exit() #... e fecha.
 
 			if is_colliding(astro, foguete, 15): #Se o astronauta colidir com o foguete...
 				if not astro.com_a_gasolina: #... e não estiver com a gasolina...
 					print("Você precisa da gasolina para ligar o foguete") #... o jogo diz que ele precisa da gasolina para ligar o foguete...
 				else: #... mas se estiver...
-					astro.entrar_no_foguete() #... o astronauta entra no foguete.
-					foguete.ligar()
+					astro.entrar_no_foguete() #... o astronauta entra no foguete...
+					foguete.ligar() #... o foguete é ligado...
+					self.padronizar() #... os valores padrões do jogo são restabelecidos...
+					nivel_atual = 3 #... e o nível atual é atualizado.
 
 			if gasosa2.gerado: #Se a gasolina estiver gerada...
 				if is_colliding(astro, gasosa2, 25): #... e os astronauta estiver colidindo com ela...
@@ -264,6 +296,89 @@ class Game():
 			shoots.update() #Atualiza os tiros
 			rockets.update() #Atualiza os foguetes
 
+		elif level == 3:
+
+			win.blit(fundo3, (0,0))
+
+			control(astro)
+			
+			win.blit(boss_health_bar[chefao.health], (0,0))
+			if not astro.dentro_do_foguete: #Se o personagem não estiver dentro do foguete...
+				masked_blit(win, itens, pos[dire][int(mov / 10)], astro.wy, astro.x, astro.y, astro.w, astro.h) #o jogo exibe na tela a animação do personagem
+
+			if chefao.vivo:
+				masked_blit(win, boss, chefao.wx, chefao.wy, chefao.x, chefao.y, chefao.w, chefao.h)
+
+			draw_group(shoots) #Desenha o grupo de disparos
+			draw_group(grupo_gas) #Desenha o grupo de gasolinas
+			draw_group(rockets) #Desenha o grupo de foguetes
+			draw_group(cannons) #Desenha o grupo de canhões
+			draw_group(cannon_shoots) #Desenha o grupo de disparos do canhão
+			draw_group(robots) #Desenha o grupo de robôs
+
+			pygame.display.flip() #Atualiza a tela
+
+			win.fill((255, 255, 255))
+
+			for r in robots: #Para cada robô gerado...
+				if is_colliding(astro, r, 25): #... o jogo testa se está colidindo com o astronauta...
+					if r.ligado: #... caso esteja colidindo e o robô estiver ligado...
+						print("O robô te atacou!") #... o jogo diz que o robô te atacou...
+						exit() #... e fecha.
+
+			if gasosa3.gerado: #Se a gasolina estiver gerada...
+				if is_colliding(astro, gasosa3, 25): #... e os astronauta estiver colidindo com ela...
+					print("Você pegou a gasolina!") #... o jogo diz que o astronauta pegou a gasolina...
+					astro.pegar_gasolina()
+					gasosa3.kill() #... destrói o sprite...
+					gasosa3.destruir() #... e destrói a gasolina gerada.
+
+			for c in cannons: #Para cada canhão do jogo...
+				for t in shoots: #... e para cada tiro gerado...
+					if hit(t, c, 15): #... se o tiro atingir o canhão...
+						canhao_disp = objetos.DisparoCanhao(cannon_shoot, c, shoot_rect) #... o canhão dispara...
+						cannon_shoots.add(canhao_disp)
+						t.kill() #... e o tiro é deletado.
+			
+			for t in shoots: #Para cada tiro gerado...
+				if t.rect.centerx > (astro.x + 1000):
+					t.kill() #Se o tiro se afastar muito do personagem, ele é deletado
+				if t.rect.centerx < (astro.x - 1000):
+					t.kill() #Se o tiro se afastar muito do personagem, ele é deletado
+				
+				for r in robots: #... e para cada robô...
+					if hit(r, t, 25): #... se o tiro atingir o robô...
+						r.desligar() #... o robô é desligado...
+						t.kill() #... o tiro é destruído...
+						r.kill() #... e o robô também é destruído.
+
+			for c_t in cannon_shoots: #Para cada disparo de canhão gerado...
+				if chefao.vivo: #... se o chefão estiver vivo...
+					if cannon_hit(c_t, chefao, 25): #... e se o disparo de canhão atingir o boss...
+						c_t.kill() #... o disparo do canhão é destruído...
+						chefao.levar_dano() #... o boss leva dano...
+						robot = personagem.Robo(robo, 800, 200, robot_rect) #... um novo robô é gerado...
+						robots.add(robot)
+						if chefao.health == 0: #... se a vida do boss chegar a 0...
+							chefao.matar() #... o boss morre...
+							if gasosa3.qtd_gerada == 0: #... se a quantidade de gasolina gerada for 0...
+								gasosa3.gerar() #... a gasolina da terceira fase é gerada...
+								grupo_gas.add(gasosa3) #... e adicionada no grupo.
+
+
+			if is_colliding(astro, foguete, 15): #Se o astronauta colidir com o foguete...
+				if not astro.com_a_gasolina: #... e não estiver com a gasolina...
+					print("Você precisa da gasolina para ligar o foguete") #... o jogo diz que ele precisa da gasolina para ligar o foguete...
+				else: #... mas se estiver...
+					astro.entrar_no_foguete() #... o astronauta entra no foguete...
+					foguete.ligar() #... o foguete é ligado...
+
+			shoots.update() #Atualiza os tiros
+			rockets.update() #Atualiza os foguetes
+			cannon_shoots.update() #Atualiza os disparos do canhão
+			robots.update(w) #Atualiza os robôs
+
+
 	def padronizar(self): #Volta os valores padrão no final de cada fase
 		foguete.ligado = False
 		astro.dentro_do_foguete = False
@@ -278,6 +393,10 @@ def is_colliding(obj1, obj2, dist): #Recebe os dois objetos que eu quero testar 
 
 def hit(inimigo, disparo, dist): #Recebe como parâmetro o alien e o disparo, para ver se estão colidindo. Recebe também a distância de colisão
 	if inimigo.x >= disparo.x and inimigo.x <= disparo.x + dist:
+		return True
+
+def cannon_hit(obj1, obj2, dist): #Recebe como parâmetro o tiro do canhão e o boss, para ver se estão colidindo. Recebe também a distância de colisão
+	if obj1.y >= obj2.y and obj1.y <= obj2.y + dist:
 		return True
 
 while game:
@@ -303,8 +422,8 @@ Desafios para as próximas atualizações:
 	- Adicionar colisão com inimigo (✓)
 	- Adicionar disparos do astronauta(✓)
 	- Adicionar sistema de gasolina e foguete (✓)
-	- Adicionar múltiplas fases ()
-	- Adicionar boss na fase 3 ()
+	- Adicionar múltiplas fases (✓)
+	- Adicionar boss na fase 3 (✓)
 	- Adicionar menu ()
 	- Adicionar mensagem no final ()
 '''
