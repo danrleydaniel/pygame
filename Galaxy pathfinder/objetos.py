@@ -48,3 +48,22 @@ class Foguete(pygame.sprite.Sprite):
 	def update(self):
 		if self.ligado:
 			self.y -= 2
+
+class Canhao(pygame.sprite.Sprite):
+	def __init__(self, img, can_x, can_y, sr):
+		pygame.sprite.Sprite.__init__(self)
+		self.rect = sr
+		self.image = img
+		self.x = can_x
+		self.y = can_y
+
+class DisparoCanhao(pygame.sprite.Sprite):
+	def __init__(self, img, obj_canhao, sr):
+		pygame.sprite.Sprite.__init__(self)
+		self.rect = sr
+		self.image = img
+		self.x = obj_canhao.x
+		self.y = obj_canhao.y + 3
+
+	def update(self):
+		self.y -= 2
