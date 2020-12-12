@@ -1,3 +1,5 @@
+import pygame
+
 class Personagem:
 	def __init__(self, wx, wy, x, y, w, h):
 		self.x = x
@@ -45,3 +47,44 @@ class Alien:
 
 	def matar(self):
 		self.vivo = False
+
+class Boss:
+	def __init__(self, wx, wy, x, y, w, h):
+		self.x = x
+		self.y = y
+		self.w = w
+		self.h = h
+		self.wx = wx
+		self.wy = wy
+		self.health = 4
+		self.vivo = True
+
+	def levar_dano(self):
+		if self.health > 0:
+			self.health -= 1
+
+	def matar(self):
+		self.vivo = False
+
+class Robo(pygame.sprite.Sprite):
+	def __init__(self, img, rob_x, rob_y, sr):
+		pygame.sprite.Sprite.__init__(self)
+		self.rect = sr
+		self.image = img
+		self.x = rob_x
+		self.y = rob_y
+		self.ligado = True
+		self.upd = -2
+
+	def update(self, window):
+		if self.ligado:
+			if self.x >= window:
+				self.upd = -2
+			elif self.x <= 50:
+				self.upd = 2
+			self.x += self.upd
+		else:
+			self.upd = 0
+
+	def desligar(self):
+		self.ligado = False
