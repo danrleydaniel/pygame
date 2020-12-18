@@ -12,6 +12,7 @@ from pygame.locals import *
 	Astronauta e plataforma: https://opengameart.org/content/astronaut-0 (criado por MrGecko)
 	Background: https://opengameart.org/content/parallax-space-scene-seamlessly-scrolls-too (criado por LuminousDragonGames)
 	Background da fase 3: https://opengameart.org/content/2d-space-background (criado por Scribe)
+	Background do menu: https://opengameart.org/content/starfield-background (criado por Sauer2)
 	Alien inimigo: https://opengameart.org/content/alien-2d-sprites (criado por Korba™)
 	Nave espacial: https://opengameart.org/content/simple-spaceship (criado por Xevin)
 	Gasolina: https://opengameart.org/content/sci-fi-goodscommodities (criado por ChaosShark)
@@ -21,6 +22,13 @@ from pygame.locals import *
 	Música de fundo: https://opengameart.org/content/through-space (criado por maxstack)
 '''
 
+'''
+O ícone do jogo foi feito utilizando as seguintes imagens:
+
+	Astronauta: https://toppng.com/file-animated-wikimedia-commons-astronaut-drawi-PNG-free-PNG-Images_229399?search-result=astronaut-on-moon-with-flag (criado por John3)
+	Fundo: https://opengameart.org/content/bevouliin-free-space-background (criado por bevouliin.com)
+
+'''
 
 pygame.init()
 
@@ -57,6 +65,9 @@ itens = pygame.image.load("images/astronauta.png") #Carrega os sprites do astron
 fundo = pygame.image.load("images/background.jpg") #Carrega a imagem de fundo
 fundo2 = pygame.image.load("images/background2.png") #Carrega a imagem de fundo da fase 2
 fundo3 = pygame.image.load("images/background3.png") #Carrega a imagem de fundo da fase 3
+fundo_menu = pygame.image.load("images/background_menu.png") #Carrega a imagem de fundo do menu principal
+aviso_enter = pygame.image.load("images/aperte_enter.png") #Carrega o texto "Aperte ENTER para continuar"
+logo = pygame.image.load("images/logo.png") #Carrega o logotipo do jogo
 alien = pygame.image.load("images/alienigena.png") #Carrega os sprites do alien
 gas = pygame.image.load("images/gasolina.png") #Carrega o sprite da gasolina
 shoot = pygame.image.load("images/disparo.png") #Carrega os sprites do tiro
@@ -65,6 +76,9 @@ rocket = pygame.image.load("images/foguete.png") #Carrega o sprite do foguete
 boss = pygame.image.load("images/boss.png") #Carrega o sprite do boss (fase 3)
 robo = pygame.image.load("images/robo.png") #Carrega o sprite do robô (fase 3)
 canhao = pygame.image.load("images/canhao.png") #Carrega o sprite do canhão (fase 3)
+
+''' CARREGA O ÍCONE: '''
+icon = pygame.image.load("icone/icon.ico") #Carrega o ícone do jogo
 
 ''' CARREGA A BARRA DE VIDA DO BOSS: '''
 boss_health_bar = []
@@ -109,6 +123,8 @@ pygame.mixer.music.load("music/through space.ogg")
 pygame.mixer.music.play()
 
 pygame.display.set_caption("Galaxy Pathfinder")
+
+pygame.display.set_icon(icon)
 
 def nothing_pressed():
 	for i in pygame.key.get_pressed():
@@ -162,6 +178,23 @@ def control(obj): #Controla o personagem
 		mov = 0
 	if mov < 0:
 		mov = 19
+
+def main_menu():
+	continuar = True
+	while continuar:
+		win.blit(fundo_menu, (0,0))
+		win.blit(logo, (0,0))
+		win.blit(aviso_enter, (170,320))
+		pygame.display.flip()
+
+		for e in pygame.event.get():
+			if e.type == pygame.QUIT:
+				exit()
+
+			if e.type == pygame.KEYDOWN:
+				if e.key == pygame.K_RETURN:
+					continuar = False
+
 
 class Game():
 	def __init__(self, level):
@@ -399,8 +432,9 @@ def cannon_hit(obj1, obj2, dist): #Recebe como parâmetro o tiro do canhão e o 
 	if obj1.y >= obj2.y and obj1.y <= obj2.y + dist:
 		return True
 
+main_menu()
+
 while game:
-	
 	Game(nivel_atual) #Inicia o jogo
 	
 	relo.tick(700) #Dá uma pausa de 700 milissegundos no jogo para as animações não ficarem muito frenéticas
@@ -424,6 +458,6 @@ Desafios para as próximas atualizações:
 	- Adicionar sistema de gasolina e foguete (✓)
 	- Adicionar múltiplas fases (✓)
 	- Adicionar boss na fase 3 (✓)
-	- Adicionar menu ()
+	- Adicionar menu (✓)
 	- Adicionar mensagem no final ()
 '''
