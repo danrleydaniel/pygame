@@ -67,6 +67,7 @@ fundo2 = pygame.image.load("images/background2.png") #Carrega a imagem de fundo 
 fundo3 = pygame.image.load("images/background3.png") #Carrega a imagem de fundo da fase 3
 fundo_menu = pygame.image.load("images/background_menu.png") #Carrega a imagem de fundo do menu principal
 aviso_enter = pygame.image.load("images/aperte_enter.png") #Carrega o texto "Aperte ENTER para continuar"
+msg_final = pygame.image.load("images/final.png") #Carrega a mensagem do final do jogo
 logo = pygame.image.load("images/logo.png") #Carrega o logotipo do jogo
 alien = pygame.image.load("images/alienigena.png") #Carrega os sprites do alien
 gas = pygame.image.load("images/gasolina.png") #Carrega o sprite da gasolina
@@ -195,7 +196,6 @@ def main_menu():
 				if e.key == pygame.K_RETURN:
 					continuar = False
 
-
 class Game():
 	def __init__(self, level):
 		global inimigos_vivos
@@ -227,8 +227,9 @@ class Game():
 				else: #... mas se estiver...
 					astro.entrar_no_foguete() #... o astronauta entra no foguete...
 					foguete.ligar() #... o foguete é ligado...
-					nivel_atual = 2 #... o nível do jogador é atualizado...
-					self.padronizar() #... e os valores padrão das posições do personagem e do foguete são restabelecidos.
+			if foguete.y <= -10:
+				nivel_atual = 2 #... o nível do jogador é atualizado...
+				self.padronizar() #... e os valores padrão das posições do personagem e do foguete são restabelecidos.
 
 			if gasosa.gerado: #Se a gasolina estiver gerada...
 				if is_colliding(astro, gasosa, 25): #... e os astronauta estiver colidindo com ela...
@@ -291,8 +292,10 @@ class Game():
 				else: #... mas se estiver...
 					astro.entrar_no_foguete() #... o astronauta entra no foguete...
 					foguete.ligar() #... o foguete é ligado...
-					self.padronizar() #... os valores padrões do jogo são restabelecidos...
-					nivel_atual = 3 #... e o nível atual é atualizado.
+			
+			if foguete.y <= -10:	
+				self.padronizar() #... os valores padrões do jogo são restabelecidos...
+				nivel_atual = 3 #... e o nível atual é atualizado.
 
 			if gasosa2.gerado: #Se a gasolina estiver gerada...
 				if is_colliding(astro, gasosa2, 25): #... e os astronauta estiver colidindo com ela...
@@ -349,6 +352,9 @@ class Game():
 			draw_group(cannon_shoots) #Desenha o grupo de disparos do canhão
 			draw_group(robots) #Desenha o grupo de robôs
 
+			if foguete.y <= -10:
+				win.blit(msg_final, (0,0))
+
 			pygame.display.flip() #Atualiza a tela
 
 			win.fill((255, 255, 255))
@@ -398,7 +404,6 @@ class Game():
 								gasosa3.gerar() #... a gasolina da terceira fase é gerada...
 								grupo_gas.add(gasosa3) #... e adicionada no grupo.
 
-
 			if is_colliding(astro, foguete, 15): #Se o astronauta colidir com o foguete...
 				if not astro.com_a_gasolina: #... e não estiver com a gasolina...
 					print("Você precisa da gasolina para ligar o foguete") #... o jogo diz que ele precisa da gasolina para ligar o foguete...
@@ -410,6 +415,7 @@ class Game():
 			rockets.update() #Atualiza os foguetes
 			cannon_shoots.update() #Atualiza os disparos do canhão
 			robots.update(w) #Atualiza os robôs
+			
 
 
 	def padronizar(self): #Volta os valores padrão no final de cada fase
@@ -459,5 +465,5 @@ Desafios para as próximas atualizações:
 	- Adicionar múltiplas fases (✓)
 	- Adicionar boss na fase 3 (✓)
 	- Adicionar menu (✓)
-	- Adicionar mensagem no final ()
+	- Adicionar mensagem no final (✓)
 '''
